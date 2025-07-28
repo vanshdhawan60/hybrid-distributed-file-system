@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package hybridDFS;
+
+// Interface exported by the master server
+service MasterToClient {
+  rpc create_file (String) returns (Status) {}
+  rpc delete_file (String) returns (Status) {}
+  rpc list_files (String) returns (stream String) {}
+  rpc get_chunk_locs (String) returns (Status) {}
+  rpc commit_chunk (String) returns (Status) {}
+  rpc file_create_status (String) returns (Status) {}
+  rpc get_chunk_details (String) returns (Status) {}
+}
+
+// Interface exported by the chunk server
+service ChunkToClient {
+  rpc create_chunk (stream String) returns (Status) {}
+  rpc read_chunk (String) returns (stream String) {}
+}
+
+service ChunkToChunk {
+  rpc create_chunk (stream String) returns (Status) {}
+  rpc read_entire_chunk (String) returns (stream String) {}
+}
+
+service ChunkToMaster {
+  rpc commit_chunk (String) returns (Status) {}
+  rpc delete_chunks (stream String) returns (Status) {}
+  rpc replicate_chunk (String) returns (Status) {}
+  rpc heartbeat (String) returns (Status) {}
+}
+
+service MasterToChunk {
+  rpc query_chunks (stream String) returns (stream String) {}
+}
+
+message String {
+  string str = 1;
+}
+
+message Status {
+  int32 code = 1;
+  string message = 2;
+}
